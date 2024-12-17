@@ -8,12 +8,14 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function list(){
+    public function list()
+    {
         $users = DB::table('users')->orderBy('id', 'desc')->get();
         return view('users.list', compact('users'));
     }
 
-    public function form(){
+    public function form()
+    {
         $id = null;
         $name = null;
         $email = null;
@@ -22,14 +24,15 @@ class UserController extends Controller
         return view('users.form', compact('id', 'name', 'email', 'password'));
     }
 
-    public function create(Request $request){
+    public function create(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
             'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string',
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return redirect('/users/form')
                 ->withErrors($validator)
                 ->withInput();
@@ -39,7 +42,7 @@ class UserController extends Controller
         $email = $request->email;
         $password = $request->password;
 
-        $user =DB::table('users')->insert([
+        $user = DB::table('users')->insert([
             'name' => $name,
             'email' => $email,
             'password' => $password,
@@ -48,10 +51,11 @@ class UserController extends Controller
         return redirect('/users');
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
         $user = DB::table('users')->where('id', $id)->first();
 
-        if(isset($user)){
+        if (isset($user)) {
             $id = $user->id;
             $name = $user->name;
             $email = $user->email;
@@ -60,7 +64,8 @@ class UserController extends Controller
         return view('users.form', compact('id', 'name', 'email', 'password'));
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
         $name = $request->name;
         $email = $request->email;
         $password = $request->password;
@@ -74,23 +79,26 @@ class UserController extends Controller
         return redirect('/users');
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         DB::table('users')->where('id', $id)->delete();
         return redirect('/users');
     }
 
-    public function signIn(){
+    public function signIn()
+    {
         return view('users.signIn');
     }
 
-    public function signInProcess(Request $request){
+    public function signInProcess(Request $request)
+    {
 
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return redirect('/user/signIn')
                 ->withErrors($validator)
                 ->withInput();
@@ -101,26 +109,27 @@ class UserController extends Controller
 
         $user = DB::table('users')->where('email', $email)->first();
 
-        if(isset($user)){
-            if($user->password == $password){
+        if (isset($user)) {
+            if ($user->password == $password) {
                 $request->session()->put('user_id', $user->id);
                 return redirect('/backoffice');
             }
-        }else{
+        } else {
             return redirect('/user/signIn')->withErrors(['search' => 'Invalid email or password']);
         }
     }
 
-    public function signOut(Request $request){
+    public function signOut(Request $request)
+    {
         $request->session()->forget('user_id');
         return redirect('/user/signIn');
     }
 
-    public function info(){
+    public function info()
+    {
         $user_id = session('user_id');
-        $user = DB::table('users')->where('id', $user_id)->first();
+        $user = DB::table('users')->select('id', 'name', 'email')->where('id', $user_id)->first();
 
         return view('users.info', compact('user'));
     }
 }
-
