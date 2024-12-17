@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BackOfficeController;
 use App\Http\Middleware\EnsureTokenIsValid;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductTypeController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -131,4 +132,6 @@ Route::get('/product-price-not-in', [ProductController::class, 'priceNotIn']);
 Route::get('/product-price-max-min-count-avg', [ProductController::class, 'priceMaxCountAvg']);
 
 Route::get('/product-type-list', [ProductController::class, 'productTypeList']);
-Route::get('/product-type/{productTypeId}', [ProductController::class, 'listByProductType']);
+Route::get('/list-by-product-type/{productTypeId}', [ProductController::class, 'listByProductType']);
+
+Route::get('/product-type/list', [ProductTypeController::class, 'index']);

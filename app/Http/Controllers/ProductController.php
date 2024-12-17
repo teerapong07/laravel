@@ -68,7 +68,7 @@ class ProductController extends Controller
         }else{
             $products = Product::all();
         }
-        
+
         return view('product.list', compact('products', 'keyword'));
     }
 
@@ -131,9 +131,9 @@ class ProductController extends Controller
     }
 
     public function listByProductType($productTypeId){
-        $products = ProductType::find($productTypeId);
+        $productType = ProductType::find($productTypeId);
 
-        return view('product.list', compact('products'));
+        return view('product.list-by-product-type', compact('productType'));
     }
 
 }
